@@ -1,0 +1,9 @@
+{
+    "name": "shocklogic/synclogic",
+    "description": "Synclogic",
+    "autoload": {
+        "psr-4": {
+            "Synclogic\\": "core/"
+        }
+    }
+}
