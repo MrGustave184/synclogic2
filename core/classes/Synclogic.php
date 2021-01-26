@@ -1,27 +1,24 @@
 <?php
 namespace Synclogic\Classes;
-use Synclogic\Classes\SynclogicDB;
-require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
 class Synclogic
 {
     private $wpdb;
-    private $synclogicDB;
     private $routes;
+    private $tables;
 
     public function __construct()
     {
         global $wpdb;
         $this->wpdb = $wpdb;
-        $this->synclogicDB = new SynclogicDB();
         $this->routes = [];
+        $this->tables = [];
     }
 
     public function install()
     {
-        foreach($this->synclogicDB->tables() as $alias => $table) {
-            $tableSQL = $this->synclogicDB->getSQL($alias);
-            $this->createTable($tableSQL);
+        foreach($this->tables as $table) {
+            $table->create();
         }
 
         add_option("synclogic_data", null, '', 'yes');
@@ -29,18 +26,11 @@ class Synclogic
 
     public function uninstall()
     {
-        foreach($this->synclogicDB->tables() as $alias => $table) {
-            $table_name = $table['name'];
-            $sql = "DROP TABLE IF EXISTS $table_name;";
-            $this->wpdb->query($sql);
+        foreach($this->tables as $table) {
+            $table->destroy();
         }
         
         delete_option('synclogic_data');
-    }
-
-    public function createTable($sql)
-    {
-        dbDelta($sql);
     }
 
     public function register() 

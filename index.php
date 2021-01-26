@@ -16,13 +16,21 @@ define('ODIN_API', 'https://clients.shocklogic.com/odin/wp-json/shocklogic');
 require SYNCLOGIC_BASE_PATH . 'vendor/autoload.php';
 
 use Synclogic\Classes\Synclogic;
-use Synclogic\Classes\SynclogicDB;
 use Synclogic\Api\FacultiesRoutes;
+use Synclogic\Classes\FacultiesTable;
+use Synclogic\Classes\ProgrammeTable;
+use Synclogic\Classes\PresentationsTable;
 
 $synclogic = new Synclogic();
 
 $synclogic->addElement('routes', [
     new FacultiesRoutes()
+]);
+
+$synclogic->addElement('tables', [
+    new FacultiesTable(),
+    new ProgrammeTable(),
+    new PresentationsTable(),
 ]);
 
 $synclogic->register();
