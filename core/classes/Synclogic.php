@@ -19,6 +19,7 @@ class Synclogic
     {
         foreach($this->tables as $table) {
             $table->create();
+            // $table->fill();
         }
 
         add_option("synclogic_data", null, '', 'yes');

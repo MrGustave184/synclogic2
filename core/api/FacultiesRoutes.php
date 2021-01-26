@@ -1,6 +1,7 @@
 <?php
 namespace Synclogic\Api;
 use Synclogic\Helpers\CurlHelper;
+use Synclogic\Classes\FacultiesTable;
 
 class FacultiesRoutes
 {
@@ -28,9 +29,7 @@ class FacultiesRoutes
 
     public function fillFacultiesTable()
     {
-        $curl = new CurlHelper();
-        $response = $curl->get(ODIN_API . get_option('synclogic_data') . '/Faculty/MEETEXPE/LRAV2020');
-
-        return json_decode($response);
+        $table = new FactultiesTable();
+        $table->fill();
     }
 }

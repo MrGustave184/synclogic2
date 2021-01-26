@@ -1,6 +1,8 @@
 <?php
 namespace Synclogic\Classes;
 
+use Synclogic\Helpers\CurlHelper;
+
 class FacultiesTable
 {
     private $wpdb;
@@ -41,8 +43,28 @@ class FacultiesTable
     {
         $curl = new CurlHelper();
         $data = $curl->get(ODIN_API . get_option('synclogic_data') . '/Faculty/MEETEXPE/LRAV2020');
+        $data = json_decode($data);
 
-        return json_decode($response);
+        $query = "INSERT INTO {$this->table_name} (speaker_id, speaker_name, speaker_family_name, category_id, company, image_profile, biography, job_title) VALUES ";
+
+        foreach($data as $faculty) {
+            $job_title = $faculty->job_title ?? $faculty->ExtraField01;
+
+            $query .= $this->wpdb->prepare(
+                "(%s, %s, %s, %d, %s, %s, %s, %s),",
+                $faculty->Faculty_Id,
+                $faculty->First_Name,
+                $faculty->Family_Name,
+                $faculty->Category_Code,
+                $faculty->Company,
+                $faculty->Image01,
+                $faculty->Biography,
+                $job_title
+            );
+        }
+        
+        $query = rtrim($query, ',') . ';';
+        return $this->wpdb->query($query);
     }
 
     public function truncate()
