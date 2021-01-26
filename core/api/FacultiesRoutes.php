@@ -29,7 +29,7 @@ class FacultiesRoutes
     public function fillFacultiesTable()
     {
         $curl = new CurlHelper();
-        $response = $curl->get(ODIN_API . '/Faculty/MEETEXPE/LRAV2020');
+        $response = $curl->get(ODIN_API . get_option('synclogic_data') . '/Faculty/MEETEXPE/LRAV2020');
 
         return json_decode($response);
     }
