@@ -42,10 +42,17 @@ class FacultiesTable
     public function fill()
     {
         $curl = new CurlHelper();
-        $data = $curl->get(ODIN_API . get_option('synclogic_data') . '/Faculty/MEETEXPE/LRAV2020');
+        $data = $curl->get(ODIN_API . get_option('synclogic_data') . '/Faculty/MEETEXPE/RIVERBED');
         $data = json_decode($data);
 
-        $query = "INSERT INTO {$this->table_name} (speaker_id, speaker_name, speaker_family_name, category_id, company, image_profile, biography, job_title) VALUES ";
+        $query = "INSERT INTO {$this->table_name} (
+            speaker_id, speaker_name, 
+            speaker_family_name, 
+            category_id, company, 
+            image_profile, 
+            biography, 
+            job_title
+        ) VALUES ";
 
         foreach($data as $faculty) {
             $job_title = $faculty->job_title ?? $faculty->ExtraField01;
