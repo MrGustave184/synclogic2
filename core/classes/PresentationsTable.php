@@ -1,6 +1,8 @@
 <?php
 namespace Synclogic\Classes;
 
+use Synclogic\Helpers\CurlHelper;
+
 class PresentationsTable
 {
     private $wpdb;
@@ -52,7 +54,6 @@ class PresentationsTable
             use_for_virtual_presentation TINYINT,
             virtual_room_link_presentation TEXT,
             virtual_room_link_presentation_recorded TEXT,
-            count_speaker INT,
             PRIMARY KEY  (presentation_id)
         ) $charset;";
     }
@@ -66,7 +67,7 @@ class PresentationsTable
     public function fill()
     {
         $curl = new CurlHelper();
-        $data = $curl->get(ODIN_API . get_option('synclogic_data') . '/Programme/1/2/all/MEETEXPE/RIVERBED');
+        $data = $curl->get(ODIN_API . get_option('synclogic_data') . '/Programme/1/2/all/'.CLIENT_ID.'/'.PROJECT_ID);
         $data = json_decode($data);
         $programme = $data->Programme;
 
@@ -103,67 +104,62 @@ class PresentationsTable
             use_for_feedback,
             use_for_virtual_presentation,
             virtual_room_link_presentation,
-            virtual_room_link_presentation_recorded,
+            virtual_room_link_presentation_recorded
         ) VALUES ";
 
+        $values = '';
 
         foreach ($programme->Days as $days) :
         foreach ($days->Session_Groups as $sessions) :
         foreach ($sessions->Sessions as $key => $session) :
-        foreach($session as $presentations) :
-        foreach($presentations as $presentation) :
-
-
-            $query .= $this->wpdb->prepare(
+        foreach($session->Presentations as $presentation) :
+            $values .= $this->wpdb->prepare(
                 "(%s, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %s, %s, %s, %d, %d, %s, %s),",
-                json_encode($values8['Abstract']),
-                    $values8['Abstract_Body'],
-                    $values8['Abstract_Driven'],
-                    $values8['Abstract_Number'],
-                    $values8['Abstract']['AbstractAuthor'],
-                    $values8['Abstract_Status'],
-                    $values8['Abstract_Title'],
-                    $values8['AcptRej'],
-                    json_encode($values8['AllSpeakers']),
-                    json_encode($values8['AllSpeakersList']),
-                    json_encode($values8['Abstract']['Authors']),
-                    $values8['Description'],
-                    $values8['Online_Programme_Is_Viewable'],
-                    $values8['Person_Id'],
-                    $values8['Presentation_Attachment_Type'],
-                    $values8['Presentation_Body'],
-                    $values8['Presentation_Id'],
-                    $values8['Presentation_Preference'],
-                    $values8['Presentation_Title'],
-                    $values8['Profile_Allow_Submission'],
-                    $values8['Profile_Edit_Start_Date'],
-                    $values8['Profile_Edit_End_Date'],
-                    $values8['Profile_Uploads_Start_Date'],
-                    $values8['Profile_Uploads_End_Date'],
-                    $values8['Public_Caption'],
-                    $values8['Sequence_Number'],
-                    $values8['Session_Id'],
-                    $values8['Start_Time'],
-                    $values8['Status_Code'],
-                    $values8['Use_For_Feedback'],
-                    $values8['Use_For_Virtual_Session'],
-                    $values8['Virtual_Room_Link'],
-                    $values8['Virtual_Room_Link_Recorded']
+                json_encode($presentation->Abstract),
+                $presentation->Abstract_Body,
+                $presentation->Abstract_Driven,
+                $presentation->Abstract_Number,
+                $presentation->Abstract->AbstractAuthor ?? NULL,
+                $presentation->Abstract_Status,
+                $presentation->Abstract_Title,
+                $presentation->AcptRej,
+                json_encode($presentation->AllSpeakers),
+                json_encode($presentation->AllSpeakersList),
+                json_encode($presentation->Abstract->Authors),
+                $presentation->Description,
+                $presentation->Online_Programme_Is_Viewable,
+                $presentation->Person_Id,
+                $presentation->Presentation_Attachment_Type,
+                $presentation->Presentation_Body,
+                $presentation->Presentation_Id,
+                $presentation->Presentation_Preference,
+                $presentation->Presentation_Title,
+                $presentation->Profile_Allow_Submission,
+                $presentation->Profile_Edit_Start_Date,
+                $presentation->Profile_Edit_End_Date,
+                $presentation->Profile_Uploads_Start_Date,
+                $presentation->Profile_Uploads_End_Date,
+                $presentation->Public_Caption,
+                $presentation->Sequence_Number,
+                $presentation->Session_Id,
+                $presentation->Start_Time,
+                $presentation->Status_Code,
+                $presentation->Use_For_Feedback,
+                $presentation->Use_For_Virtual_Session,
+                $presentation->Virtual_Room_Link,
+                $presentation->Virtual_Room_Link_Recorded
             );
-        
-        endforeach;
         endforeach;
         endforeach;
         endforeach;
         endforeach;
 
-        $query = rtrim($query, ',') . ';';
+        if(! $values) {
+            return false;
+        }
+
+        $query = rtrim($query.$values, ',') . ';';
         return $this->wpdb->query($query);
-
-
-
-
-
     }
 
     public function truncate()

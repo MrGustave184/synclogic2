@@ -1,5 +1,7 @@
 <?php
 // paste in index.php or functions.php
+
+// START DEBUG
 define('temp_file', ABSPATH.'/_temp_out.txt' );
 
 add_action("activated_plugin", "activation_handler1");
@@ -20,3 +22,4 @@ function pre_output1($action){
         }
     }
 }
+// END DEBUG
