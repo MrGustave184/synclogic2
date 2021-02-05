@@ -19,7 +19,7 @@ class Synclogic
     {
         foreach($this->tables as $table) {
             $table->create();
-            $table->fill();
+            // $table->fill();
         }
 
         add_option("synclogic_data", null, '', 'yes');
@@ -34,12 +34,35 @@ class Synclogic
         delete_option('synclogic_data');
     }
 
+    public function menuPage()
+    {
+        $page_title = 'Synclogic';
+        $menu_title = 'Synclogic';
+        $capability = 'manage_options';
+        $menu_slug = 'synclogic';
+        $callback = [$this, 'synclogic_menu'];
+        $icon_url = 'dashicons-update';
+        $position = 6;
+
+        add_menu_page($page_title, $menu_title, $capability, $menu_slug, $callback, $icon_url, $position);
+    }
+
+    public function synclogic_menu()
+    {
+        if ( is_file( SYNCLOGIC_BASE_PATH . 'layout.php' ) ) {
+            include_once SYNCLOGIC_BASE_PATH . 'layout.php';
+        }
+    }
+
     public function register() 
     {
         register_activation_hook(SYNCLOGIC_FILE_PATH, [$this, 'install']);
         register_deactivation_hook(SYNCLOGIC_FILE_PATH, [$this, 'uninstall']);
 
         $this->registerElement('routes');
+
+        // Add menu page
+        add_action('admin_menu', [$this, 'menuPage']);
     }
 
     public function registerElement($property)

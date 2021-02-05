@@ -36,5 +36,3 @@ $synclogic->addElement('tables', [
 ]);
 
 $synclogic->register();
-
-$test = new ProgrammeTable();
