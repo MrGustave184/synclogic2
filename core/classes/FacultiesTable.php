@@ -20,16 +20,20 @@ class FacultiesTable
 
         $this->table_name = $prefix . 'eventlogic_faculties' . $blogID;
 
+
+        // TO ADD
+        // sequence_No
+
         $this->sql = "CREATE TABLE IF NOT EXISTS {$this->table_name} (
-            speaker_id varchar(200) NOT NULL,
-            speaker_name varchar(255) NOT NULL,
-            speaker_family_name varchar(255),
+            faculty_id varchar(200) NOT NULL,
+            faculty_name varchar(255) NOT NULL,
+            faculty_family_name varchar(255),
             category_id varchar(255),
             company varchar(255),
             image_profile varchar(255),
             biography text,
             job_title varchar(255),
-            PRIMARY KEY  (speaker_id)
+            PRIMARY KEY  (faculty_id)
         ) $charset;";
     }
 
@@ -46,8 +50,8 @@ class FacultiesTable
         $data = json_decode($data);
 
         $query = "INSERT INTO {$this->table_name} (
-            speaker_id, speaker_name, 
-            speaker_family_name, 
+            faculty_id, faculty_name, 
+            faculty_family_name, 
             category_id, company, 
             image_profile, 
             biography, 

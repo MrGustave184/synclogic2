@@ -22,6 +22,7 @@ use Synclogic\Api\FacultiesRoutes;
 use Synclogic\Classes\FacultiesTable;
 use Synclogic\Classes\ProgrammeTable;
 use Synclogic\Classes\PresentationsTable;
+use Synclogic\Classes\FacultiesPresentationsTable;
 
 $synclogic = new Synclogic();
 
@@ -33,6 +34,7 @@ $synclogic->addElement('tables', [
     new FacultiesTable(),
     new ProgrammeTable(),
     new PresentationsTable(),
+    new FacultiesPresentationsTable()
 ]);
 
 $synclogic->register();

@@ -20,6 +20,12 @@ class ProgrammeTable
 
         $this->table_name = $prefix . 'eventlogic_programme' . $blogID;
 
+        // TO REMOVE!!!!!!!!!!!!!!!!
+        // all_faculties varchar(255),
+        // all_faculties_sequence_No varchar(255),
+        // all_chairs varchar(255),
+        // all_chairs_sequence_No varchar(255),       
+
         $this->sql = "CREATE TABLE IF NOT EXISTS {$this->table_name} (
             session_id varchar(200) NOT NULL,
             session_day DATE,
