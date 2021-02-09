@@ -23,6 +23,7 @@ use Synclogic\Classes\FacultiesTable;
 use Synclogic\Classes\ProgrammeTable;
 use Synclogic\Classes\PresentationsTable;
 use Synclogic\Classes\FacultiesPresentationsTable;
+use Synclogic\Classes\FacultiesSessionsTable;
 
 $synclogic = new Synclogic();
 
@@ -34,7 +35,8 @@ $synclogic->addElement('tables', [
     new FacultiesTable(),
     new ProgrammeTable(),
     new PresentationsTable(),
-    new FacultiesPresentationsTable()
+    new FacultiesPresentationsTable(),
+    new FacultiesSessionsTable()
 ]);
 
 $synclogic->register();

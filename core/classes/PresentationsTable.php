@@ -111,7 +111,7 @@ class PresentationsTable
 
         foreach ($programme->Days as $days) :
         foreach ($days->Session_Groups as $sessions) :
-        foreach ($sessions->Sessions as $key => $session) :
+        foreach ($sessions->Sessions as $session) :
         foreach($session->Presentations as $presentation) :
             $values .= $this->wpdb->prepare(
                 "(%s, %s, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %s, %s, %s, %d, %d, %s, %s),",
