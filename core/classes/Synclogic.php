@@ -24,7 +24,7 @@ class Synclogic
             // $table->fill();
         }
 
-        // $this->fillTables();
+        $this->fillTables();
 
         add_option("synclogic_data", null, '', 'yes');
     }
@@ -36,11 +36,13 @@ class Synclogic
         $prefix = $this->wpdb->prefix;
         $charset = $this->wpdb->get_charset_collate();
 
+        $facultiesPerSessionTable = $prefix . 'eventlogic_facultiessessions' . $blogID;
+
 
  
         // Faculties
         $table_name = $prefix . 'eventlogic_faculties' . $blogID;
-        $data = $curl->get(ODIN_API . get_option('synclogic_data') . '/Faculty/MEETEXPE/LRAV2020');
+        $data = $curl->get(ODIN_API . get_option('synclogic_data') . '/Faculty/'.CLIENT_ID.'/'.PROJECT_ID);
         $data = json_decode($data);
 
         $query = "INSERT INTO {$table_name} (
@@ -73,11 +75,12 @@ class Synclogic
 
 
         // Sessions and presentations
-        $data = $curl->get(ODIN_API . get_option('synclogic_data') . '/Programme/1/2/all/MEETEXPE/RIVERBED');
+        $data = $curl->get(ODIN_API . get_option('synclogic_data') . '/Programme/1/2/all/'.CLIENT_ID.'/'.PROJECT_ID);
         $data = json_decode($data);
         $programme = $data->Programme;
+        $sessionsTable = $prefix . 'eventlogic_programme' . $blogID;
 
-        $sessionsQuery = "INSERT INTO {$this->table_name} (
+        $sessionsQuery = "INSERT INTO {$sessionsTable} (
             session_id,
             session_day,
             session_day_name,
@@ -101,7 +104,7 @@ class Synclogic
         foreach ($programme->Days as $days) :
         foreach ($days->Session_Groups as $sessions) :
         foreach ($sessions->Sessions as $session) :
-            $data_session = json_decode($curl->get(ODIN_API . "/Sessions/{$session->Session_Id}/MEETEXPE/RIVERBED"));
+            $data_session = json_decode($curl->get(ODIN_API . "/Sessions/{$session->Session_Id}/".CLIENT_ID.'/'.PROJECT_ID));
 
             if((gettype($data_session) == 'array') && $data_session[0]->Hide_this_session_from_online_programme != '1') {
                 $aux_all_faculties = "";
@@ -109,16 +112,39 @@ class Synclogic
                 $aux_chairs_Sequence_No = "";
                 $aux_faculties_Sequence_No = "";
 
+                $facultiesPerSessionQuery = "INSERT INTO {$facultiesPerSessionTable} (
+                    session_id,
+                    faculty_id,
+                    sequence_number,
+                    role_id
+                ) VALUES ";
 
+                // if(! empty($data_session[0]->Session_Faculty)) {
+                    $values = '';
 
-                foreach ($data_session[0]->Session_Faculty as $sefac) {
-                    if ($sefac->Role_Id == '1') {
-                        $aux_chairs = $sefac->Faculty_Id . ";" . $aux_chairs;
-                        $aux_chairs_Sequence_No = $sefac->Sequence_No . "-" . $sefac->Faculty_Id . ";" . $aux_chairs_Sequence_No;
-                    } else {
-                        $aux_all_faculties = $sefac->Faculty_Id . ";" . $aux_all_faculties;
-                        $aux_faculties_Sequence_No = $sefac->Sequence_No . "-" . $sefac->Faculty_Id . ";" . $aux_faculties_Sequence_No;
+                    foreach ($data_session[0]->Session_Faculty as $sefac) {
+                        if ($sefac->Role_Id == '1') {
+                            $aux_chairs = $sefac->Faculty_Id . ";" . $aux_chairs;
+                            $aux_chairs_Sequence_No = $sefac->Sequence_No . "-" . $sefac->Faculty_Id . ";" . $aux_chairs_Sequence_No;
+                        } else {
+                            $aux_all_faculties = $sefac->Faculty_Id . ";" . $aux_all_faculties;
+                            $aux_faculties_Sequence_No = $sefac->Sequence_No . "-" . $sefac->Faculty_Id . ";" . $aux_faculties_Sequence_No;
+                        }
+
+                        // fill facultiessessions
+                        $values .= $this->wpdb->prepare(
+                            "(%d, %d, %d, %d),",
+                            $session->Session_Id,
+                            $sefac->Faculty_Id,
+                            $sefac->Sequence_No,
+                            $sefac->Role_Id
+                        );
                     }
+                // }
+
+                if($values) {
+                    $facultiesPerSessionQuery = rtrim($facultiesPerSessionQuery.$values, ',') . ';';
+                    $this->wpdb->query($facultiesPerSessionQuery);
                 }
 
                 $sessionsQuery .= $this->wpdb->prepare(
@@ -142,13 +168,15 @@ class Synclogic
                     $data_session[0]->Virtual_Widget_Link3 ?? NULL,
                     $data_session[0]->Virtual_Widget_Link3_Caption ?? NULL
                 );
+
+                // go to presentation level
             }
         endforeach;
         endforeach;
         endforeach;
 
         $sessionsQuery = rtrim($sessionsQuery, ',') . ';';
-        return $this->wpdb->query($sessionsQuery);
+        $this->wpdb->query($sessionsQuery);
 
     }
 

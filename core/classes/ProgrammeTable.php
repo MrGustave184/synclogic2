@@ -132,7 +132,7 @@ class ProgrammeTable
         endforeach;
 
         $query = rtrim($query, ',') . ';';
-        return $this->wpdb->query($query);
+        $this->wpdb->query($query);
     }
 
     public function truncate()
