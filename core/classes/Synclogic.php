@@ -119,28 +119,26 @@ class Synclogic
                     role_id
                 ) VALUES ";
 
-                // if(! empty($data_session[0]->Session_Faculty)) {
-                    $values = '';
+                $values = '';
 
-                    foreach ($data_session[0]->Session_Faculty as $sefac) {
-                        if ($sefac->Role_Id == '1') {
-                            $aux_chairs = $sefac->Faculty_Id . ";" . $aux_chairs;
-                            $aux_chairs_Sequence_No = $sefac->Sequence_No . "-" . $sefac->Faculty_Id . ";" . $aux_chairs_Sequence_No;
-                        } else {
-                            $aux_all_faculties = $sefac->Faculty_Id . ";" . $aux_all_faculties;
-                            $aux_faculties_Sequence_No = $sefac->Sequence_No . "-" . $sefac->Faculty_Id . ";" . $aux_faculties_Sequence_No;
-                        }
-
-                        // fill facultiessessions
-                        $values .= $this->wpdb->prepare(
-                            "(%d, %d, %d, %d),",
-                            $session->Session_Id,
-                            $sefac->Faculty_Id,
-                            $sefac->Sequence_No,
-                            $sefac->Role_Id
-                        );
+                foreach ($data_session[0]->Session_Faculty as $faculty) {
+                    if ($faculty->Role_Id == '1') {
+                        $aux_chairs = $faculty->Faculty_Id . ";" . $aux_chairs;
+                        $aux_chairs_Sequence_No = $faculty->Sequence_No . "-" . $faculty->Faculty_Id . ";" . $aux_chairs_Sequence_No;
+                    } else {
+                        $aux_all_faculties = $faculty->Faculty_Id . ";" . $aux_all_faculties;
+                        $aux_faculties_Sequence_No = $faculty->Sequence_No . "-" . $faculty->Faculty_Id . ";" . $aux_faculties_Sequence_No;
                     }
-                // }
+
+                    // fill facultiessessions
+                    $values .= $this->wpdb->prepare(
+                        "(%d, %d, %d, %d),",
+                        $session->Session_Id,
+                        $faculty->Faculty_Id,
+                        $faculty->Sequence_No,
+                        $faculty->Role_Id
+                    );
+                }
 
                 if($values) {
                     $facultiesPerSessionQuery = rtrim($facultiesPerSessionQuery.$values, ',') . ';';
