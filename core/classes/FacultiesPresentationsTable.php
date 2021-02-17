@@ -23,9 +23,7 @@ class FacultiesPresentationsTable
         // ADD PRIMARY/FOREIGN KEY!!!
         $this->sql = "CREATE TABLE IF NOT EXISTS {$this->table_name} (
             faculty_id INT,
-            presentation_id INT NOT NULL,
-            sequence_number INT,
-            role_id INT
+            presentation_id INT NOT NULL
         ) $charset;";
     }
 

@@ -21,10 +21,10 @@ class Synclogic
     {
         foreach($this->tables as $table) {
             $table->create();
-            // $table->fill();
+            $table->fill();
         }
 
-        $this->fillTables();
+        // $this->fillTables();
 
         add_option("synclogic_data", null, '', 'yes');
     }
@@ -102,6 +102,8 @@ class Synclogic
             virtual_widget_link_3_caption
         ) VALUES ";
 
+        $sessionValues = '';
+
         foreach ($programme->Days as $days) :
         foreach ($days->Session_Groups as $sessions) :
         foreach ($sessions->Sessions as $session) :
@@ -146,7 +148,7 @@ class Synclogic
                     $this->wpdb->query($facultiesPerSessionQuery);
                 }
 
-                $sessionsQuery .= $this->wpdb->prepare(
+                $sessionValues .= $this->wpdb->prepare(
                     "(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s),",
                     $session->Session_Id,
                     $session->Session_Date,
@@ -206,6 +208,13 @@ class Synclogic
                 ) VALUES ";
 
                 $presentationValues = '';
+                
+                $facultiesPresentationsTable = $prefix . 'eventlogic_facultiespresentations' . $blogID;
+                $facultiesPresentationsValues = '';
+                $facultiesPresentationsQuery = "INSERT INTO {$facultiesPresentationsTable} (
+                    faculty_id,
+                    presentation_id
+                ) VALUES ";
 
                 // go to presentation level
                 foreach($session->Presentations as $presentation) :
@@ -215,9 +224,9 @@ class Synclogic
                         $presentation->Abstract_Body,
                         $presentation->Abstract_Driven,
                         $presentation->Abstract_Number,
-                        $presentation->Abstract->AbstractAuthor ?? NULL,
                         $presentation->Abstract_Status,
                         $presentation->Abstract_Title,
+                        $presentation->Abstract->AbstractAuthor ?? NULL,
                         $presentation->AcptRej,
                         json_encode($presentation->AllSpeakers),
                         json_encode($presentation->AllSpeakersList),
@@ -245,7 +254,24 @@ class Synclogic
                         $presentation->Virtual_Room_Link,
                         $presentation->Virtual_Room_Link_Recorded
                     );
+
+                    // fill facultiespresentations
+                    foreach($presentation->AllSpeakers as $faculty) {
+                                                
+                        $facultiesPresentationsValues .= $this->wpdb->prepare(
+                            "(%d, %d),",
+                            $faculty->Faculty_Id,
+                            $presentation->Presentation_Id
+                        );
+                    }
+
+
                 endforeach;
+
+                if( $facultiesPresentationsValues) {
+                    $facultiesPresentationsQuery = rtrim($facultiesPresentationsQuery. $facultiesPresentationsValues, ',') . ';';
+                    $this->wpdb->query($facultiesPresentationsQuery);
+                }
 
                 if($presentationValues) {
                     $presentationsQuery = rtrim($presentationsQuery.$presentationValues, ',') . ';';
@@ -257,7 +283,7 @@ class Synclogic
         endforeach;
         endforeach;
 
-        $sessionsQuery = rtrim($sessionsQuery, ',') . ';';
+        $sessionsQuery = rtrim($sessionsQuery.$sessionValues, ',') . ';';
         $this->wpdb->query($sessionsQuery);
 
     }

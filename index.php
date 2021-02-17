@@ -47,6 +47,7 @@ use Synclogic\Classes\ProgrammeTable;
 use Synclogic\Classes\PresentationsTable;
 use Synclogic\Classes\FacultiesPresentationsTable;
 use Synclogic\Classes\FacultiesSessionsTable;
+use Synclogic\Classes\LinkedTables;
 
 $synclogic = new Synclogic();
 
@@ -55,11 +56,12 @@ $synclogic->addElement('routes', [
 ]);
 
 $synclogic->addElement('tables', [
-    new FacultiesTable(),
-    new ProgrammeTable(),
-    new PresentationsTable(),
-    new FacultiesPresentationsTable(),
-    new FacultiesSessionsTable()
+    // new FacultiesTable(),
+    // new ProgrammeTable(),
+    // new PresentationsTable(),
+    // new FacultiesPresentationsTable(),
+    new LinkedTables(),
+    // new FacultiesSessionsTable()
 ]);
 
 $synclogic->register();
