@@ -64,7 +64,7 @@ class LinkedTables
         foreach ($programme->Days as $days) :
         foreach ($days->Session_Groups as $sessions) :
         foreach ($sessions->Sessions as $session) :
-            $data_session = json_decode($curl->get(ODIN_API . "/Sessions/{$session->Session_Id}/".CLIENT_ID.'/'.PROJECT_ID));
+            $data_session = json_decode($curl->get(ODIN_API."/Sessions/{$session->Session_Id}/".CLIENT_ID.'/'.PROJECT_ID));
 
             if((gettype($data_session) == 'array') && $data_session[0]->Hide_this_session_from_online_programme != '1') {
                 $facultiesPerSessionQuery = "INSERT INTO {$facultiesPerSessionTable} (
@@ -114,7 +114,7 @@ class LinkedTables
                     $this->wpdb->query($facultiesPresentationsQuery);
                 }
             }
-            
+
         endforeach;
         endforeach;
         endforeach;

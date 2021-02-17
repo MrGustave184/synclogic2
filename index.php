@@ -12,8 +12,8 @@ define('SYNCLOGIC_BASE_URL', plugin_dir_url(__FILE__));
 define('SYNCLOGIC_FILE_PATH', __FILE__);
 define('SYNCLOGIC_API', 'http://virtualogic2.test/wp-json/synclogic');
 define('ODIN_API', 'https://clients.shocklogic.com/odin/wp-json/shocklogic');
-define('CLIENT_ID', 'MEETEXPE');
-define('PROJECT_ID', 'LRAV2020');
+define('CLIENT_ID', 'HG3');
+define('PROJECT_ID', 'HG3OST20');
 
 // START DEBUG
 define('temp_file', ABSPATH.'/_temp_out.txt' );
@@ -56,9 +56,9 @@ $synclogic->addElement('routes', [
 ]);
 
 $synclogic->addElement('tables', [
-    // new FacultiesTable(),
-    // new ProgrammeTable(),
-    // new PresentationsTable(),
+    new FacultiesTable(),
+    new ProgrammeTable(),
+    new PresentationsTable(),
     // new FacultiesPresentationsTable(),
     new LinkedTables(),
     // new FacultiesSessionsTable()

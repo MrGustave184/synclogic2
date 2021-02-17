@@ -20,10 +20,6 @@ class FacultiesTable
 
         $this->table_name = $prefix . 'eventlogic_faculties' . $blogID;
 
-
-        // TO ADD
-        // sequence_No
-
         $this->sql = "CREATE TABLE IF NOT EXISTS {$this->table_name} (
             faculty_id varchar(200) NOT NULL,
             faculty_name varchar(255) NOT NULL,
@@ -44,9 +40,9 @@ class FacultiesTable
     }
 
     public function fill()
-    {
+    {   
         $curl = new CurlHelper();
-        $data = $curl->get(ODIN_API . get_option('synclogic_data') . '/Faculty/MEETEXPE/RIVERBED');
+        $data = $curl->get(ODIN_API . get_option('synclogic_data') . '/Faculty/'.CLIENT_ID.'/'.PROJECT_ID);
         $data = json_decode($data);
 
         $query = "INSERT INTO {$this->table_name} (
@@ -75,7 +71,7 @@ class FacultiesTable
         }
         
         $query = rtrim($query, ',') . ';';
-        return $this->wpdb->query($query);
+        $this->wpdb->query($query);
     }
 
     public function truncate()
