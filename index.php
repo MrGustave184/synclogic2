@@ -42,6 +42,7 @@ require SYNCLOGIC_BASE_PATH . 'vendor/autoload.php';
 
 use Synclogic\Classes\Synclogic;
 use Synclogic\Api\FacultiesRoutes;
+use Synclogic\Api\SynclogicRoutes;
 use Synclogic\Classes\FacultiesTable;
 use Synclogic\Classes\ProgrammeTable;
 use Synclogic\Classes\PresentationsTable;
@@ -52,7 +53,8 @@ use Synclogic\Classes\LinkedTables;
 $synclogic = new Synclogic();
 
 $synclogic->addElement('routes', [
-    new FacultiesRoutes()
+    new FacultiesRoutes(),
+    new SynclogicRoutes()
 ]);
 
 $synclogic->addElement('tables', [

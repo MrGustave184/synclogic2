@@ -11,6 +11,7 @@
 
                 <form method="post" action="options.php">
                     <?php wp_nonce_field('update-options'); ?>
+
                     <div class="form-group">
                         <label for="synclogic_data">API Key:</label>
                         <input class="form-control" name="synclogic_data" type="text" id="synclogic_data" value="<?= get_option('synclogic_data'); ?>" />
@@ -19,12 +20,14 @@
 
                     <input type="hidden" name="action" value="update" />
                     <input type="hidden" name="page_options" value="synclogic_data" />
+
                     <input class="btn" style="background-color: #FF6E0D; color: #fff;" onclick="sync()" type="submit" value="<?php _e('Synchronize') ?>" />
                 </form>
             </div>
         </div>
     </div>
 </div>
+
 <script>
     function spinner() {
         var expires = new Date();

@@ -29,6 +29,15 @@ class Synclogic
         add_option("synclogic_data", null, '', 'yes');
     }
 
+    public function synchronize()
+    {
+        foreach($this->tables as $table) {
+            $table->destroy();
+        }
+
+        return 'Tables deleted';
+    }
+
     public function fillTables()
     {
         $curl = new CurlHelper();
@@ -39,8 +48,6 @@ class Synclogic
         $facultiesPerSessionTable = $prefix . 'eventlogic_facultiessessions' . $blogID;
         $presentationTable = $prefix . 'eventlogic_presentations' . $blogID;
 
-
- 
         // Faculties
         $table_name = $prefix . 'eventlogic_faculties' . $blogID;
         $data = $curl->get(ODIN_API . get_option('synclogic_data') . '/Faculty/'.CLIENT_ID.'/'.PROJECT_ID);
